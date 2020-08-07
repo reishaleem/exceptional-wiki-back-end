@@ -1,31 +1,28 @@
 package com.exceptionaloutlining.app.services;
 
 import com.exceptionaloutlining.app.models.User;
+import com.exceptionaloutlining.app.models.Wiki;
 import com.exceptionaloutlining.app.repositories.UserRepository;
+import com.exceptionaloutlining.app.repositories.WikiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Component
-public class UserService {
+public class WikiService {
 
-    private final UserRepository repository;
+    private final WikiRepository repository;
 
     @Autowired
-    public UserService(UserRepository repository) {
+    public WikiService(WikiRepository repository) {
         this.repository = repository;
     }
 
-    public List<User> getAllUsers() {
-        return repository.findAll();
-    }
+    public List<Wiki> getAllWikis() {
 
-    public User saveNewUser(User user) {
-        repository.save(user);
-        return user;
+        return repository.findAll();
     }
 }

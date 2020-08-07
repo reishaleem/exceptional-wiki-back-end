@@ -3,8 +3,7 @@ package com.exceptionaloutlining.app.controllers;
 import com.exceptionaloutlining.app.models.User;
 import com.exceptionaloutlining.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +20,11 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return service.getAllUsers();
+    }
+
+    // create a user
+    @PostMapping("/register")
+    public User createUser(@RequestBody User newUser) {
+        return service.saveNewUser(newUser);
     }
 }

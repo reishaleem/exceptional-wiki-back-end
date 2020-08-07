@@ -7,18 +7,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
+@Document
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Wiki {
 
     @Id
     private String id;
-    private String username;
-    private String password;
 
     @DBRef
-    private List<Wiki> wikis;
+    private User owner;
+
+    private String dateCreated;
+    private String lastEdited;
+    private String body;
 }
