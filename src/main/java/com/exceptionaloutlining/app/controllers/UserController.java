@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -20,6 +21,16 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return service.getAllUsers();
+    }
+
+    @GetMapping("/profile")
+    public Optional<User> getLoggedInUser() {
+        return service.getUserById(); // will need to edit this later, once we figure out how to get the proper ID...
+    }
+
+    @DeleteMapping("/profile") 
+    public boolean deleteUser() {
+        return service.deleteUser(); // will need to edit this later, once we figure out how to get the proper id...
     }
 
     // create a user
