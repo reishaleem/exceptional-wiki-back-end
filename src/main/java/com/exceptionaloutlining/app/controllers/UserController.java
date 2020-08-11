@@ -18,12 +18,19 @@ public class UserController {
         this.service = service;
     }
 
+    // create a user
+    @PostMapping("/register")
+    public User createUser(@RequestBody User newUser) {
+        return service.saveNewUser(newUser);
+    }
+
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return service.getAllUsers();
     }
 
-    @GetMapping("/profile")
+    // look at specific user profile
+    @GetMapping("/profile") // may change endpoint later to something like /account/profile...
     public Optional<User> getLoggedInUser() {
         return service.getUserById(); // will need to edit this later, once we figure out how to get the proper ID...
     }
@@ -31,11 +38,5 @@ public class UserController {
     @DeleteMapping("/profile") 
     public boolean deleteUser() {
         return service.deleteUser(); // will need to edit this later, once we figure out how to get the proper id...
-    }
-
-    // create a user
-    @PostMapping("/register")
-    public User createUser(@RequestBody User newUser) {
-        return service.saveNewUser(newUser);
     }
 }
