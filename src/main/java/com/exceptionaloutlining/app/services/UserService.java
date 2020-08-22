@@ -28,7 +28,7 @@ public class UserService {
     }
 
     public Optional<User> getUserById() {
-        return repository.findById("1");
+        return repository.findById("2");
     }
 
     public boolean deleteUser() {
