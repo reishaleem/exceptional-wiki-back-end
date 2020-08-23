@@ -1,8 +1,6 @@
 package com.exceptionaloutlining.app.controllers;
 
-import com.exceptionaloutlining.app.models.User;
 import com.exceptionaloutlining.app.models.Wiki;
-import com.exceptionaloutlining.app.services.UserService;
 import com.exceptionaloutlining.app.services.WikiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

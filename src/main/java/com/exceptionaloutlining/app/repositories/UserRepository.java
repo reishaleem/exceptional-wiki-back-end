@@ -1,13 +1,20 @@
 package com.exceptionaloutlining.app.repositories;
 
+import java.util.Optional;
+
 import com.exceptionaloutlining.app.models.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
 
 public interface UserRepository extends MongoRepository<User, String> {
 
-    public List<User> findByUsername(String username);
+    public Optional<User> findByUsername(String username);
+
+    public Optional<User> findByEmail(String email);
+
+    Boolean existsByUsername(String username);
+
+    Boolean existsByEmail(String email);
 
     //public User findById(Long id);
 }

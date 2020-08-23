@@ -1,8 +1,6 @@
 package com.exceptionaloutlining.app.services;
 
-import com.exceptionaloutlining.app.models.User;
 import com.exceptionaloutlining.app.models.Wiki;
-import com.exceptionaloutlining.app.repositories.UserRepository;
 import com.exceptionaloutlining.app.repositories.WikiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

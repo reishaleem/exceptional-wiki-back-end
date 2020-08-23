@@ -1,14 +1,20 @@
 package com.exceptionaloutlining.app.controllers;
 
 import com.exceptionaloutlining.app.models.User;
+import com.exceptionaloutlining.app.payload.request.LoginRequest;
+import com.exceptionaloutlining.app.payload.request.SignUpRequest;
 import com.exceptionaloutlining.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 @RestController
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService service;
@@ -20,14 +26,19 @@ public class UserController {
 
     // create a user
     @PostMapping("/register")
-    public User createUser(@RequestBody User newUser) {
-        return service.saveNewUser(newUser);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        return service.saveNewUser(signUpRequest);
     }
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return service.getAllUsers();
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        return service.authenticateUser(loginRequest);
+	}
 
     // look at specific user profile
     @GetMapping("/profile") // may change endpoint later to something like /account/profile...
