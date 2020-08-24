@@ -23,15 +23,15 @@ import javax.validation.constraints.Size;
 public class User {
 
     @Transient
-	public static final String SEQUENCE_NAME = "users_sequence";
+    public static final String SEQUENCE_NAME = "users_sequence";
 
     @Id
     private String id;
-    
+
     @NotBlank
     @Size(max = 20)
     private String username;
-    
+
     @Email
     @NotBlank
     @Size(max = 50)
@@ -41,7 +41,7 @@ public class User {
     @Size(max = 30)
     private String name;
 
-    @Size(max=160)
+    @Size(max = 255)
     private String bio;
 
     @NotBlank
@@ -54,10 +54,11 @@ public class User {
     @DBRef
     private List<Wiki> wikis;
 
-    public User(String username, String email, String name, String password) {
+    public User(String username, String email, String name, String password, String bio) {
         this.username = username;
         this.email = email;
         this.name = name;
         this.password = password;
+        this.bio = bio;
     }
 }
