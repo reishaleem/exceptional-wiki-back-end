@@ -3,6 +3,8 @@ package com.exceptionaloutlining.app.controllers;
 import com.exceptionaloutlining.app.models.User;
 import com.exceptionaloutlining.app.payload.request.LoginRequest;
 import com.exceptionaloutlining.app.payload.request.SignUpRequest;
+import com.exceptionaloutlining.app.payload.request.UpdateUserProfileRequest;
+import com.exceptionaloutlining.app.payload.request.UpdateUserSecurityRequest;
 import com.exceptionaloutlining.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +41,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return service.authenticateUser(loginRequest);
-	}
+    }
 
     // look at specific user profile
     @GetMapping("/profile") // may change endpoint later to something like /account/profile...
@@ -47,7 +49,19 @@ public class UserController {
         return service.getUserById(); // will need to edit this later, once we figure out how to get the proper ID...
     }
 
-    @DeleteMapping("/profile") 
+    // should probably update so that the id is being sent in params, right??
+    @PutMapping("/update_profile")
+    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UpdateUserProfileRequest updateRequest) {
+        return service.updateUserProfile(updateRequest);
+    }
+
+    // should probably update so that the id is being sent in params, right??
+    @PutMapping("/update_security")
+    public ResponseEntity<?> updateUserSecurity(@Valid @RequestBody UpdateUserSecurityRequest updateRequest) {
+        return service.updateUserSecurity(updateRequest);
+    }
+
+    @DeleteMapping("/profile")
     public boolean deleteUser() {
         return service.deleteUser(); // will need to edit this later, once we figure out how to get the proper id...
     }

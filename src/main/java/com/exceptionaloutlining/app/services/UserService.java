@@ -5,6 +5,8 @@ import com.exceptionaloutlining.app.models.Role;
 import com.exceptionaloutlining.app.models.User;
 import com.exceptionaloutlining.app.payload.request.LoginRequest;
 import com.exceptionaloutlining.app.payload.request.SignUpRequest;
+import com.exceptionaloutlining.app.payload.request.UpdateUserProfileRequest;
+import com.exceptionaloutlining.app.payload.request.UpdateUserSecurityRequest;
 import com.exceptionaloutlining.app.payload.response.JwtResponse;
 import com.exceptionaloutlining.app.payload.response.MessageResponse;
 import com.exceptionaloutlining.app.repositories.RoleRepository;
@@ -143,5 +145,60 @@ public class UserService {
 		repository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	public ResponseEntity<?> updateUserProfile(UpdateUserProfileRequest updateRequest) {
+		// repository.save(user); // event listener will ensure that the ID is already
+		// set before saving rn
+		// return user;
+
+		System.out.println("Update Request");
+		System.out.println("ID " + updateRequest.getId());
+		System.out.println("Name " + updateRequest.getName());
+		System.out.println("Username " + updateRequest.getUsername());
+		System.out.println("Email " + updateRequest.getEmail());
+		System.out.println("Bio " + updateRequest.getBio());
+
+		User user = repository.findById(updateRequest.getId())
+				.orElseThrow(() -> new RuntimeException("Error: No User with ID " + updateRequest.getId()));
+
+		// only report if the user has changed their username
+		if (!user.getUsername().equals(updateRequest.getUsername())
+				&& repository.existsByUsername(updateRequest.getUsername())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+		}
+
+		// only report if the user has changed their email
+		if (!user.getEmail().equals(updateRequest.getEmail()) && repository.existsByEmail(updateRequest.getEmail())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+		}
+
+		user.setName(updateRequest.getName());
+		user.setUsername(updateRequest.getUsername());
+		user.setEmail(updateRequest.getEmail());
+		user.setBio(updateRequest.getBio());
+		repository.save(user);
+
+		return ResponseEntity.ok(new MessageResponse("Profile updated successfully!"));
+	}
+
+	public ResponseEntity<?> updateUserSecurity(UpdateUserSecurityRequest updateRequest) {
+		// repository.save(user); // event listener will ensure that the ID is already
+		// set before saving rn
+		// return user;
+
+		User user = repository.findById(updateRequest.getId())
+				.orElseThrow(() -> new RuntimeException("Error: No User with ID " + updateRequest.getId()));
+
+		if (!encoder.matches(updateRequest.getOldPassword(), user.getPassword())) {
+			return ResponseEntity.badRequest().body(new MessageResponse("Error: Current password is incorrect"));
+		}
+		String newEncodedPassword = encoder.encode(updateRequest.getNewPassword());
+
+		user.setPassword(newEncodedPassword);
+
+		repository.save(user);
+
+		return ResponseEntity.ok(new MessageResponse("Password updated successfully!"));
 	}
 }
