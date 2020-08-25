@@ -61,8 +61,9 @@ public class UserController {
         return service.updateUserSecurity(updateRequest);
     }
 
-    @DeleteMapping("/profile")
-    public boolean deleteUser() {
-        return service.deleteUser(); // will need to edit this later, once we figure out how to get the proper id...
+    // should probably update so that the id is being sent in params, right??
+    @DeleteMapping("/delete_user/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+        return service.deleteUser(id);
     }
 }

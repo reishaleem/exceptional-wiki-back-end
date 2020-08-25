@@ -78,13 +78,11 @@ public class UserService {
 				userDetails.getEmail(), userDetails.getName(), userDetails.getBio(), roles));
 	}
 
-	public boolean deleteUser() {
-		try {
-			repository.deleteById("1");
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+	public ResponseEntity<?> deleteUser(String id) {
+		User user = repository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Error: There is no user with ID " + id));
+		repository.delete(user);
+		return ResponseEntity.ok(new MessageResponse("User has been deleted"));
 	}
 
 	public ResponseEntity<?> saveNewUser(SignUpRequest signUpRequest) {
