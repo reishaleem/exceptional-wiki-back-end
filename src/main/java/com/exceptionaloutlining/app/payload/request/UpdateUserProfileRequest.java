@@ -5,9 +5,6 @@ import javax.validation.constraints.*;
 public class UpdateUserProfileRequest {
 
     @NotBlank
-    private String id;
-
-    @NotBlank
     @Size(min = 3, max = 20)
     private String username;
 
@@ -22,14 +19,6 @@ public class UpdateUserProfileRequest {
 
     @Size(max = 255)
     private String bio;
-
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;

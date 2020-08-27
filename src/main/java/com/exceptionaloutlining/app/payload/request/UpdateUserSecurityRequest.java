@@ -5,23 +5,12 @@ import javax.validation.constraints.*;
 public class UpdateUserSecurityRequest {
 
     @NotBlank
-    private String id;
-
-    @NotBlank
     @Size(min = 6, max = 120)
     private String oldPassword;
 
     @NotBlank
     @Size(min = 6, max = 120)
     private String newPassword;
-
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getOldPassword() {
         return oldPassword;

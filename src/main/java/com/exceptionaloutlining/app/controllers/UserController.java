@@ -44,26 +44,34 @@ public class UserController {
     }
 
     // look at specific user profile
-    @GetMapping("/profile") // may change endpoint later to something like /account/profile...
-    public Optional<User> getLoggedInUser() {
-        return service.getUserById(); // will need to edit this later, once we figure out how to get the proper ID...
+    @GetMapping("/{id}/details")
+    public User getUserDetails(@PathVariable String id) {
+        System.out.println("Getting deatils...");
+        return service.getUserById(id);
     }
 
     // should probably update so that the id is being sent in params, right??
-    @PutMapping("/update_profile")
-    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UpdateUserProfileRequest updateRequest) {
-        return service.updateUserProfile(updateRequest);
+    @PutMapping("/{id}/update_profile")
+    public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UpdateUserProfileRequest updateRequest,
+            @PathVariable String id) {
+        return service.updateUserProfile(updateRequest, id);
     }
 
     // should probably update so that the id is being sent in params, right??
-    @PutMapping("/update_security")
-    public ResponseEntity<?> updateUserSecurity(@Valid @RequestBody UpdateUserSecurityRequest updateRequest) {
-        return service.updateUserSecurity(updateRequest);
+    @PutMapping("/{id}/update_security")
+    public ResponseEntity<?> updateUserSecurity(@Valid @RequestBody UpdateUserSecurityRequest updateRequest,
+            @PathVariable String id) {
+        return service.updateUserSecurity(updateRequest, id);
     }
 
     // should probably update so that the id is being sent in params, right??
-    @DeleteMapping("/delete_user/{id}")
+    @DeleteMapping("/{id}/delete_user")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         return service.deleteUser(id);
+    }
+
+    @GetMapping("/{id}/universes")
+    public ResponseEntity<?> getUserUniverseList(@PathVariable String id) {
+        return service.getUniverseList(id);
     }
 }

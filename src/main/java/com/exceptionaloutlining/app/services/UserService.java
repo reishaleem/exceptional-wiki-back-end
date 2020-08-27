@@ -37,6 +37,8 @@ public class UserService {
 	private final UserRepository repository;
 	// private SequenceGeneratorService sequenceGenerator;
 
+	private final UniverseService universeService;
+
 	@Autowired
 	AuthenticationManager authenticationManager;
 
@@ -50,8 +52,10 @@ public class UserService {
 	JwtUtils jwtUtils;
 
 	@Autowired
-	public UserService(UserRepository repository, SequenceGeneratorService sequenceGenerator) {
+	public UserService(UserRepository repository, SequenceGeneratorService sequenceGenerator,
+			UniverseService universeService) {
 		this.repository = repository;
+		this.universeService = universeService;
 		// this.sequenceGenerator = sequenceGenerator;
 	}
 
@@ -59,8 +63,8 @@ public class UserService {
 		return repository.findAll();
 	}
 
-	public Optional<User> getUserById() {
-		return repository.findById("2");
+	public User getUserById(String id) {
+		return repository.findById(id).orElseThrow(() -> new RuntimeException("Error: There is no user with ID " + id));
 	}
 
 	public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
@@ -74,8 +78,8 @@ public class UserService {
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(),
-				userDetails.getEmail(), userDetails.getName(), userDetails.getBio(), roles));
+		return ResponseEntity
+				.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getName(), roles));
 	}
 
 	public ResponseEntity<?> deleteUser(String id) {
@@ -145,20 +149,19 @@ public class UserService {
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
-	public ResponseEntity<?> updateUserProfile(UpdateUserProfileRequest updateRequest) {
+	public ResponseEntity<?> updateUserProfile(UpdateUserProfileRequest updateRequest, String id) {
 		// repository.save(user); // event listener will ensure that the ID is already
 		// set before saving rn
 		// return user;
 
 		System.out.println("Update Request");
-		System.out.println("ID " + updateRequest.getId());
+		System.out.println("ID " + id);
 		System.out.println("Name " + updateRequest.getName());
 		System.out.println("Username " + updateRequest.getUsername());
 		System.out.println("Email " + updateRequest.getEmail());
 		System.out.println("Bio " + updateRequest.getBio());
 
-		User user = repository.findById(updateRequest.getId())
-				.orElseThrow(() -> new RuntimeException("Error: No User with ID " + updateRequest.getId()));
+		User user = repository.findById(id).orElseThrow(() -> new RuntimeException("Error: No User with ID " + id));
 
 		// only report if the user has changed their username
 		if (!user.getUsername().equals(updateRequest.getUsername())
@@ -180,13 +183,12 @@ public class UserService {
 		return ResponseEntity.ok(new MessageResponse("Profile updated successfully!"));
 	}
 
-	public ResponseEntity<?> updateUserSecurity(UpdateUserSecurityRequest updateRequest) {
+	public ResponseEntity<?> updateUserSecurity(UpdateUserSecurityRequest updateRequest, String id) {
 		// repository.save(user); // event listener will ensure that the ID is already
 		// set before saving rn
 		// return user;
 
-		User user = repository.findById(updateRequest.getId())
-				.orElseThrow(() -> new RuntimeException("Error: No User with ID " + updateRequest.getId()));
+		User user = repository.findById(id).orElseThrow(() -> new RuntimeException("Error: No User with ID " + id));
 
 		if (!encoder.matches(updateRequest.getOldPassword(), user.getPassword())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Current password is incorrect"));
@@ -198,5 +200,10 @@ public class UserService {
 		repository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("Password updated successfully!"));
+	}
+
+	public ResponseEntity<?> getUniverseList(String id) {
+		return null; // we need to create a new UniverseResponse or something, similar to a JWT
+						// response...
 	}
 }

@@ -16,6 +16,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Document(collection = "users")
 @Data
 @NoArgsConstructor
@@ -44,6 +46,7 @@ public class User {
     @Size(max = 255)
     private String bio;
 
+    @JsonIgnore // don't think we need to be passing password to front end ever
     @NotBlank
     @Size(min = 6, max = 120)
     private String password;
@@ -53,6 +56,12 @@ public class User {
 
     @DBRef
     private List<Wiki> wikis;
+
+    @DBRef
+    private List<Universe> universes;
+    // add custom templates they created (put here so that they can use it in any
+    // universe)
+    // add sheets as well, same logic as templates.
 
     public User(String username, String email, String name, String password, String bio) {
         this.username = username;
