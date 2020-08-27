@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,28 +34,23 @@ import java.util.stream.Collectors;
 public class UserService {
 
 	private final UserRepository repository;
-	// private SequenceGeneratorService sequenceGenerator;
-
-	private final UniverseService universeService;
-
-	@Autowired
+	// private final UniverseService universeService;
 	AuthenticationManager authenticationManager;
-
-	@Autowired
 	RoleRepository roleRepository;
-
-	@Autowired
 	PasswordEncoder encoder;
-
-	@Autowired
 	JwtUtils jwtUtils;
 
 	@Autowired
-	public UserService(UserRepository repository, SequenceGeneratorService sequenceGenerator,
-			UniverseService universeService) {
+	public UserService(UserRepository repository, UniverseService universeService,
+			AuthenticationManager authenticationManager, RoleRepository roleRepository, PasswordEncoder encoder,
+			JwtUtils jwtUtils) {
 		this.repository = repository;
-		this.universeService = universeService;
-		// this.sequenceGenerator = sequenceGenerator;
+		// this.universeService = universeService;
+		this.authenticationManager = authenticationManager;
+		this.roleRepository = roleRepository;
+		this.encoder = encoder;
+		this.jwtUtils = jwtUtils;
+
 	}
 
 	public List<User> getAllUsers() {
@@ -67,7 +61,13 @@ public class UserService {
 		return repository.findById(id).orElseThrow(() -> new RuntimeException("Error: There is no user with ID " + id));
 	}
 
+	public ResponseEntity<?> getUniverseList(String id) {
+		return null; // we need to create a new UniverseResponse or something, similar to a JWT
+						// response...
+	}
+
 	public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
+
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -82,17 +82,8 @@ public class UserService {
 				.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getName(), roles));
 	}
 
-	public ResponseEntity<?> deleteUser(String id) {
-		User user = repository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Error: There is no user with ID " + id));
-		repository.delete(user);
-		return ResponseEntity.ok(new MessageResponse("User has been deleted"));
-	}
-
 	public ResponseEntity<?> saveNewUser(SignUpRequest signUpRequest) {
-		// repository.save(user); // event listener will ensure that the ID is already
-		// set before saving rn
-		// return user;
+
 		if (repository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
 		}
@@ -101,19 +92,12 @@ public class UserService {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 		}
 
-		System.out.println(signUpRequest.getBio());
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getName(),
 				encoder.encode(signUpRequest.getPassword()), signUpRequest.getBio());
-		System.out.println("Bio " + user.getBio());
-		System.out.println("Username " + user.getUsername());
-		System.out.println("Name: " + user.getName());
-		System.out.println("Password " + user.getPassword());
-		System.out.println("Email: " + user.getEmail());
 
 		Set<String> strRoles = signUpRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
-
 		if (strRoles == null) {
 			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -121,20 +105,6 @@ public class UserService {
 		} else {
 			strRoles.forEach(role -> {
 				switch (role) {
-					case "admin":
-						Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(adminRole);
-
-						break;
-					case "mod":
-						System.out.println("WE ARE HERE");
-						System.out.println(roleRepository.findAll());
-						Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(modRole);
-
-						break;
 					default:
 						Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -142,34 +112,26 @@ public class UserService {
 				}
 			});
 		}
+		user.setRoles(roles); // do we even need roles anymore...i don't think so...
 
-		user.setRoles(roles);
 		repository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
 	public ResponseEntity<?> updateUserProfile(UpdateUserProfileRequest updateRequest, String id) {
-		// repository.save(user); // event listener will ensure that the ID is already
-		// set before saving rn
-		// return user;
-
-		System.out.println("Update Request");
-		System.out.println("ID " + id);
-		System.out.println("Name " + updateRequest.getName());
-		System.out.println("Username " + updateRequest.getUsername());
-		System.out.println("Email " + updateRequest.getEmail());
-		System.out.println("Bio " + updateRequest.getBio());
 
 		User user = repository.findById(id).orElseThrow(() -> new RuntimeException("Error: No User with ID " + id));
 
-		// only report if the user has changed their username
+		// only report if the user has changed their username, since otherwise it will
+		// conflict with their current username
 		if (!user.getUsername().equals(updateRequest.getUsername())
 				&& repository.existsByUsername(updateRequest.getUsername())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
 		}
 
-		// only report if the user has changed their email
+		// only report if the user has changed their email, since otherwise it will
+		// conflict with their current email
 		if (!user.getEmail().equals(updateRequest.getEmail()) && repository.existsByEmail(updateRequest.getEmail())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 		}
@@ -178,23 +140,22 @@ public class UserService {
 		user.setUsername(updateRequest.getUsername());
 		user.setEmail(updateRequest.getEmail());
 		user.setBio(updateRequest.getBio());
+
 		repository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("Profile updated successfully!"));
 	}
 
 	public ResponseEntity<?> updateUserSecurity(UpdateUserSecurityRequest updateRequest, String id) {
-		// repository.save(user); // event listener will ensure that the ID is already
-		// set before saving rn
-		// return user;
 
 		User user = repository.findById(id).orElseThrow(() -> new RuntimeException("Error: No User with ID " + id));
 
+		// make sure their entered password matches the saved password
 		if (!encoder.matches(updateRequest.getOldPassword(), user.getPassword())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Current password is incorrect"));
 		}
-		String newEncodedPassword = encoder.encode(updateRequest.getNewPassword());
 
+		String newEncodedPassword = encoder.encode(updateRequest.getNewPassword());
 		user.setPassword(newEncodedPassword);
 
 		repository.save(user);
@@ -202,8 +163,13 @@ public class UserService {
 		return ResponseEntity.ok(new MessageResponse("Password updated successfully!"));
 	}
 
-	public ResponseEntity<?> getUniverseList(String id) {
-		return null; // we need to create a new UniverseResponse or something, similar to a JWT
-						// response...
+	public ResponseEntity<?> deleteUser(String id) {
+
+		User user = repository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Error: There is no user with ID " + id));
+
+		repository.delete(user);
+
+		return ResponseEntity.ok(new MessageResponse("User has been deleted"));
 	}
 }

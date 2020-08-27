@@ -13,20 +13,23 @@ import static org.springframework.data.mongodb.core.FindAndModifyOptions.options
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+/**
+ * This class generates ID values starting from 1 for the Documents in the
+ * database. It is called in the event ModelListener classes.
+ */
 @Service
 public class SequenceGeneratorService {
 
-    private MongoOperations mongoOperations;
+  private MongoOperations mongoOperations;
 
-    @Autowired
-    public SequenceGeneratorService(MongoOperations mongoOperations) {
-        this.mongoOperations = mongoOperations;
-    }
+  @Autowired
+  public SequenceGeneratorService(MongoOperations mongoOperations) {
+    this.mongoOperations = mongoOperations;
+  }
 
-    public String generateSequence(String seqName) {
-	    DatabaseSequence counter = mongoOperations.findAndModify(query(where("__id").is(seqName)),
-	      new Update().inc("seq",1), options().returnNew(true).upsert(true),
-	      DatabaseSequence.class);
-	    return !Objects.isNull(counter) ? counter.getSeq().toString() : "1";
-	}
+  public String generateSequence(String seqName) {
+    DatabaseSequence counter = mongoOperations.findAndModify(query(where("__id").is(seqName)),
+        new Update().inc("seq", 1), options().returnNew(true).upsert(true), DatabaseSequence.class);
+    return !Objects.isNull(counter) ? counter.getSeq().toString() : "1";
+  }
 }

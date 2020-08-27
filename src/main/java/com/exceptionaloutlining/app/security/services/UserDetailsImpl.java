@@ -9,18 +9,20 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.Getter;
+
 import com.exceptionaloutlining.app.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Getter
 public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
+	// These are User details regarding authentication (though id and name aren't
+	// really needed), which is why there's no bio or anything
 	private String id;
-
 	private String username;
-
 	private String name;
-
 	@JsonIgnore
 	private String password;
 
@@ -45,24 +47,6 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
-	}
-
-	@Override
-	public String getUsername() {
-		return username;
 	}
 
 	@Override

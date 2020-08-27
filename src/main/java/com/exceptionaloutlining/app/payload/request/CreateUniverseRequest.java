@@ -16,5 +16,4 @@ public class CreateUniverseRequest {
     private String name;
 
     private String desc;
-
 }

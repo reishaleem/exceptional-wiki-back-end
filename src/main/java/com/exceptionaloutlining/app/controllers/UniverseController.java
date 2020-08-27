@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/universes")
+@RequestMapping("/universes")
 @CrossOrigin(origins = "*")
 public class UniverseController {
 
@@ -29,12 +29,6 @@ public class UniverseController {
     public UniverseController(UniverseService service) {
         this.service = service;
     }
-
-    // @GetMapping("/")
-    // public ResponseEntity<?> getUserUniverseList(@Valid @RequestBody
-    // SignUpRequest signUpRequest) {
-    // return service.saveNewUser(signUpRequest);
-    // }
 
     @GetMapping("/universes")
     public List<Universe> getAllUniverses() {

@@ -1,6 +1,5 @@
 package com.exceptionaloutlining.app.events;
 
-import com.exceptionaloutlining.app.models.Universe;
 import com.exceptionaloutlining.app.models.User;
 import com.exceptionaloutlining.app.services.SequenceGeneratorService;
 

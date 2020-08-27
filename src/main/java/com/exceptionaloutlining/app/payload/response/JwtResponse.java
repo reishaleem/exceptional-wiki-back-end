@@ -2,7 +2,11 @@ package com.exceptionaloutlining.app.payload.response;
 
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class JwtResponse {
+
 	private String token;
 	private String type = "Bearer";
 	private String id;
@@ -32,33 +36,5 @@ public class JwtResponse {
 
 	public void setTokenType(String tokenType) {
 		this.type = tokenType;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public List<String> getRoles() {
-		return roles;
 	}
 }

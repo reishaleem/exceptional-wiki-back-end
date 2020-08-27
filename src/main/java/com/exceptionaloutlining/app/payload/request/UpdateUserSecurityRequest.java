@@ -2,6 +2,9 @@ package com.exceptionaloutlining.app.payload.request;
 
 import javax.validation.constraints.*;
 
+import lombok.Data;
+
+@Data
 public class UpdateUserSecurityRequest {
 
     @NotBlank
@@ -11,20 +14,4 @@ public class UpdateUserSecurityRequest {
     @NotBlank
     @Size(min = 6, max = 120)
     private String newPassword;
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String password) {
-        this.oldPassword = password;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String password) {
-        this.newPassword = password;
-    }
 }
