@@ -2,6 +2,7 @@ package com.exceptionaloutlining.app.services;
 
 import com.exceptionaloutlining.app.models.ERole;
 import com.exceptionaloutlining.app.models.Role;
+import com.exceptionaloutlining.app.models.Universe;
 import com.exceptionaloutlining.app.models.User;
 import com.exceptionaloutlining.app.payload.request.LoginRequest;
 import com.exceptionaloutlining.app.payload.request.SignUpRequest;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -94,7 +96,7 @@ public class UserService {
 
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getName(),
-				encoder.encode(signUpRequest.getPassword()), signUpRequest.getBio());
+				encoder.encode(signUpRequest.getPassword()), signUpRequest.getBio(), new ArrayList<String>());
 
 		Set<String> strRoles = signUpRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
@@ -112,7 +114,7 @@ public class UserService {
 				}
 			});
 		}
-		user.setRoles(roles); // do we even need roles anymore...i don't think so...
+		user.setRoles(roles);
 
 		repository.save(user);
 

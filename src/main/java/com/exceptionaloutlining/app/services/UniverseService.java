@@ -41,31 +41,23 @@ public class UniverseService {
     public ResponseEntity<?> createUniverse(CreateUniverseRequest request, String userId) {
 
         Universe universe = new Universe();
-        universe.setOwner(request.getOwner());
-        universe.setName(request.getName());
-        universe.setDescription(request.getDesc());
-        universe.setWikis(new ArrayList<Wiki>());
-        universe.setMaps(new ArrayList<Map>());
-        universe.setTimelines(new ArrayList<Timeline>());
-        universe.setCalendars(new ArrayList<Calendar>());
-        universe.setCharts(new ArrayList<Chart>());
-        universe.setNotebook(new Notebook());
-
-        // getting some error with saving...should we look into ditching DBRef and just
-        // storing a sub document?
-        // before doing that, make sure the other controllers and responses are in
-        // order. Too much tech debt. Refactor the code so that IDs are being sent in
-        // the URL, not through the request body, and make sure that we get all the
-        // Requests and Responses in order. Right now we just send stuff in a jwt
-        // response...
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Error: User not found with id " + userId));
-        ; // get user id from the request getOwner.id instead
-        owner.setUniverses(new ArrayList<Universe>()); // only temporary
-        owner.getUniverses().add(universe);
-        universeRepository.save(universe);
-        return ResponseEntity.ok(new MessageResponse("Universe created!"));
+        universe.setOwnerId(userId);
+        universe.setName(request.getName());
+        universe.setDescription(request.getDesc());
+        // universe.setWikis(new ArrayList<Wiki>());
+        // universe.setMaps(new ArrayList<Map>());
+        // universe.setTimelines(new ArrayList<Timeline>());
+        // universe.setCalendars(new ArrayList<Calendar>());
+        // universe.setCharts(new ArrayList<Chart>());
+        // universe.setNotebook(new Notebook());
 
+        universeRepository.save(universe);
+        owner.getUniverseIds().add(universe.getId());
+        userRepository.save(owner);
+
+        return ResponseEntity.ok(new MessageResponse("Universe created!"));
     }
 
 }

@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "users")
+@Document(collection = "universes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,8 +26,9 @@ public class Universe {
     @Id
     private String id;
 
-    @DBRef
-    private User owner;
+    // rather than using DBRef, just manually referencing by keeping ID values,
+    // making second queries to each collection as needed.
+    private String ownerId;
 
     @NotBlank
     @Size(max = 50)

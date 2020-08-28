@@ -54,20 +54,21 @@ public class User {
     @DBRef
     private Set<Role> roles = new HashSet<>();
 
-    @DBRef
-    private List<Wiki> wikis;
-
-    @DBRef
-    private List<Universe> universes;
+    // rather than save a reference and actual Universe as an embedded document, we
+    // are instead just saving the list of IDs and will make second queries to the
+    // necessary collection.
+    private List<String> universeIds;
     // add custom templates they created (put here so that they can use it in any
     // universe)
     // add sheets as well, same logic as templates.
 
-    public User(String username, String email, String name, String password, String bio) {
+    public User(String username, String email, String name, String password, String bio, List<String> universeIds) {
         this.username = username;
         this.email = email;
         this.name = name;
         this.password = password;
         this.bio = bio;
+
+        this.universeIds = universeIds;
     }
 }
