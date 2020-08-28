@@ -17,7 +17,7 @@ public class UniverseModelListener extends AbstractMongoEventListener<Universe> 
 
     private SequenceGeneratorService sequenceGenerator;
     private final ZoneId easternStandardTime = ZoneId.of("America/New_York"); // right now, always doing EST
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a'T'MMM dd, yyy");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma' 'MMM dd, yyy");
 
     @Autowired
     public UniverseModelListener(SequenceGeneratorService sequenceGenerator) {

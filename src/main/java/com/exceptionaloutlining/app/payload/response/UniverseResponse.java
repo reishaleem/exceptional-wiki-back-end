@@ -21,7 +21,7 @@ public class UniverseResponse {
     private String ownerId;
     private String name;
     private String description;
-    private String createdTimetamp;
+    private String createdTimestamp;
     private String modifiedTimestamp;
     private List<Wiki> wikis;
     private List<Map> maps;
