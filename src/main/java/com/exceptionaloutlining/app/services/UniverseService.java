@@ -38,6 +38,11 @@ public class UniverseService {
         return universeRepository.findAll();
     }
 
+    public Universe getUniverse(String universeId) {
+        return universeRepository.findById(universeId)
+                .orElseThrow(() -> new RuntimeException("Error: No Universe ID found with id " + universeId));
+    }
+
     public ResponseEntity<?> createUniverse(CreateUniverseRequest request, String userId) {
 
         Universe universe = new Universe();
@@ -46,6 +51,7 @@ public class UniverseService {
         universe.setOwnerId(userId);
         universe.setName(request.getName());
         universe.setDescription(request.getDesc());
+        // universe.setDateCreated(dateCreated);
         // universe.setWikis(new ArrayList<Wiki>());
         // universe.setMaps(new ArrayList<Map>());
         // universe.setTimelines(new ArrayList<Timeline>());

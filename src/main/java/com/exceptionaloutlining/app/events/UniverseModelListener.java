@@ -1,5 +1,9 @@
 package com.exceptionaloutlining.app.events;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 import com.exceptionaloutlining.app.models.Universe;
 import com.exceptionaloutlining.app.services.SequenceGeneratorService;
 
@@ -12,6 +16,8 @@ import org.springframework.stereotype.Component;
 public class UniverseModelListener extends AbstractMongoEventListener<Universe> {
 
     private SequenceGeneratorService sequenceGenerator;
+    private final ZoneId easternStandardTime = ZoneId.of("America/New_York"); // right now, always doing EST
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a'T'MMM dd, yyy");
 
     @Autowired
     public UniverseModelListener(SequenceGeneratorService sequenceGenerator) {
@@ -21,9 +27,16 @@ public class UniverseModelListener extends AbstractMongoEventListener<Universe> 
     @Override
     public void onBeforeConvert(BeforeConvertEvent<Universe> event) {
 
+        LocalDateTime timestamp = LocalDateTime.now(easternStandardTime);
+        String formattedTime = timestamp.format(formatter);
+
         if (event.getSource().getId() == null || Long.parseLong(event.getSource().getId()) < 1) {
             event.getSource().setId(sequenceGenerator.generateSequence(Universe.SEQUENCE_NAME));
         }
-    }
+        if (event.getSource().getCreatedTimestamp() == null || event.getSource().getCreatedTimestamp().equals("")) {
+            event.getSource().setCreatedTimestamp(formattedTime);
+        }
 
+        event.getSource().setModifiedTimestamp(formattedTime);
+    }
 }

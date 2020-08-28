@@ -18,9 +18,11 @@ import lombok.Data;
 public class UniverseResponse {
 
     private String id;
-    private User owner;
+    private String ownerId;
     private String name;
     private String description;
+    private String createdTimetamp;
+    private String modifiedTimestamp;
     private List<Wiki> wikis;
     private List<Map> maps;
     private List<Timeline> timelines;

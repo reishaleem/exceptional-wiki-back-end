@@ -10,6 +10,7 @@ import com.exceptionaloutlining.app.payload.request.UpdateUserProfileRequest;
 import com.exceptionaloutlining.app.payload.request.UpdateUserSecurityRequest;
 import com.exceptionaloutlining.app.payload.response.JwtResponse;
 import com.exceptionaloutlining.app.payload.response.MessageResponse;
+import com.exceptionaloutlining.app.payload.response.UniverseResponse;
 import com.exceptionaloutlining.app.repositories.RoleRepository;
 import com.exceptionaloutlining.app.repositories.UserRepository;
 import com.exceptionaloutlining.app.security.jwt.JwtUtils;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
 	private final UserRepository repository;
-	// private final UniverseService universeService;
+	private final UniverseService universeService;
 	AuthenticationManager authenticationManager;
 	RoleRepository roleRepository;
 	PasswordEncoder encoder;
@@ -47,7 +48,7 @@ public class UserService {
 			AuthenticationManager authenticationManager, RoleRepository roleRepository, PasswordEncoder encoder,
 			JwtUtils jwtUtils) {
 		this.repository = repository;
-		// this.universeService = universeService;
+		this.universeService = universeService;
 		this.authenticationManager = authenticationManager;
 		this.roleRepository = roleRepository;
 		this.encoder = encoder;
@@ -64,8 +65,19 @@ public class UserService {
 	}
 
 	public ResponseEntity<?> getUniverseList(String id) {
-		return null; // we need to create a new UniverseResponse or something, similar to a JWT
-						// response...
+		User user = repository.findById(id).orElseThrow(() -> new RuntimeException("Error: No User with ID " + id));
+		List<String> universeIds = user.getUniverseIds();
+		List<UniverseResponse> universes = new ArrayList<UniverseResponse>();
+		for (String universeId : universeIds) {
+			Universe universe = universeService.getUniverse(universeId);
+			UniverseResponse response = new UniverseResponse(universe.getId(), universe.getOwnerId(),
+					universe.getName(), universe.getDescription(), universe.getCreatedTimestamp(),
+					universe.getModifiedTimestamp(), universe.getWikis(), universe.getMaps(), universe.getTimelines(),
+					universe.getCalendars(), universe.getCharts(), universe.getNotebook());
+			universes.add(response);
+		}
+
+		return ResponseEntity.ok(universes);
 	}
 
 	public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
