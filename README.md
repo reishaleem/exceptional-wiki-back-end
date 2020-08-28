@@ -23,3 +23,4 @@ So far, the features implemented in this back-end are:
 Some future features that will be implemented are:
 - CRUD operations on several models, including Universes, Wikis, Maps, and much more. 
 - Implement sending an password reset email to the user
+- The Generator
