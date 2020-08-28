@@ -57,7 +57,7 @@ public class UniverseService {
         owner.getUniverseIds().add(universe.getId());
         userRepository.save(owner);
 
-        return ResponseEntity.ok(new MessageResponse("Universe created!"));
+        return ResponseEntity.ok(new MessageResponse("Universe created!", universe.getId()));
     }
 
 }
