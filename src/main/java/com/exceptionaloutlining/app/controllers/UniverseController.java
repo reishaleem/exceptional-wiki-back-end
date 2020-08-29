@@ -40,6 +40,11 @@ public class UniverseController {
         return ResponseEntity.ok(service.getUniverse(id));
     }
 
+    @GetMapping("/{id}/universes")
+    public ResponseEntity<?> getWikiList(@PathVariable String id) {
+        return service.getWikiList(id);
+    }
+
     @PostMapping("/{userId}/create_universe")
     public ResponseEntity<?> createUniverse(@Valid @RequestBody CreateUniverseRequest universeRequest,
             @PathVariable String userId) {

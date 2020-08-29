@@ -68,6 +68,8 @@ public class UserService {
 		User user = repository.findById(id).orElseThrow(() -> new RuntimeException("Error: No User with ID " + id));
 		List<String> universeIds = user.getUniverseIds();
 		List<UniverseResponse> universes = new ArrayList<UniverseResponse>();
+
+		// this functionality should probably be moved to universe service
 		for (String universeId : universeIds) {
 			Universe universe = universeService.getUniverse(universeId);
 			UniverseResponse response = new UniverseResponse(universe.getId(), universe.getOwnerId(),

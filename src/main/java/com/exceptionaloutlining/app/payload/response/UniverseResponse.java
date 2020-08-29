@@ -7,8 +7,6 @@ import com.exceptionaloutlining.app.models.Chart;
 import com.exceptionaloutlining.app.models.Map;
 import com.exceptionaloutlining.app.models.Notebook;
 import com.exceptionaloutlining.app.models.Timeline;
-import com.exceptionaloutlining.app.models.User;
-import com.exceptionaloutlining.app.models.Wiki;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +21,7 @@ public class UniverseResponse {
     private String description;
     private String createdTimestamp;
     private String modifiedTimestamp;
-    private List<Wiki> wikis;
+    private List<String> wikis;
     private List<Map> maps;
     private List<Timeline> timelines;
     private List<Calendar> calendars;

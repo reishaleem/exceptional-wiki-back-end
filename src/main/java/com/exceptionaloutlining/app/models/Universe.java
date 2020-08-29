@@ -5,10 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -45,8 +42,7 @@ public class Universe {
 
     private String modifiedTimestamp;
 
-    @DBRef
-    private List<Wiki> wikis;
+    private List<String> wikis;
 
     @DBRef
     private List<Map> maps;

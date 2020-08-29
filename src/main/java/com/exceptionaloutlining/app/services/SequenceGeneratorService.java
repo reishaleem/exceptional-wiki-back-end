@@ -16,6 +16,9 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 /**
  * This class generates ID values starting from 1 for the Documents in the
  * database. It is called in the event ModelListener classes.
+ * 
+ * I'm really not sure if we even need this. It lets IDs start from 1 instead of
+ * the long one Mongo gives by default, but not sure it matters.
  */
 @Service
 public class SequenceGeneratorService {
