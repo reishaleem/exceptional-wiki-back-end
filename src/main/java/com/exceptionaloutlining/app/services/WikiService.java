@@ -3,7 +3,9 @@ package com.exceptionaloutlining.app.services;
 import com.exceptionaloutlining.app.models.Universe;
 import com.exceptionaloutlining.app.models.Wiki;
 import com.exceptionaloutlining.app.payload.request.CreateWikiRequest;
+import com.exceptionaloutlining.app.payload.request.UpdateWikiRequest;
 import com.exceptionaloutlining.app.payload.response.MessageResponse;
+import com.exceptionaloutlining.app.payload.response.WikiResponse;
 import com.exceptionaloutlining.app.repositories.UniverseRepository;
 import com.exceptionaloutlining.app.repositories.UserRepository;
 import com.exceptionaloutlining.app.repositories.WikiRepository;
@@ -62,5 +64,17 @@ public class WikiService {
         universeRepository.save(universe);
 
         return ResponseEntity.ok(new MessageResponse("Wiki created", wiki.getId()));
+    }
+
+    public ResponseEntity<?> updateWiki(UpdateWikiRequest request, String wikiId) {
+
+        Wiki wiki = wikiRepository.findById(wikiId)
+                .orElseThrow(() -> new RuntimeException("Error: No wiki with ID " + wikiId));
+        wiki.setName(request.getName());
+        wiki.setBody(request.getBody());
+        wikiRepository.save(wiki);
+
+        return ResponseEntity.ok(new WikiResponse(wiki.getId(), wiki.getName(), wiki.getUniverseId(), wiki.getOwnerId(),
+                wiki.getCreatedTimestamp(), wiki.getModifiedTimestamp(), wiki.getBody()));
     }
 }
