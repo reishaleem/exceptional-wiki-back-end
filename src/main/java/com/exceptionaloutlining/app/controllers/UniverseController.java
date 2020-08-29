@@ -35,6 +35,11 @@ public class UniverseController {
         return service.getAllUniverses();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUniverse(@PathVariable String id) {
+        return ResponseEntity.ok(service.getUniverse(id));
+    }
+
     @PostMapping("/{userId}/create_universe")
     public ResponseEntity<?> createUniverse(@Valid @RequestBody CreateUniverseRequest universeRequest,
             @PathVariable String userId) {
