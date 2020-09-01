@@ -1,5 +1,8 @@
 package com.exceptionaloutlining.app.controllers;
 
+import javax.validation.Valid;
+
+import com.exceptionaloutlining.app.payload.request.CreateTaskRequest;
 import com.exceptionaloutlining.app.services.TaskService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +34,13 @@ public class TaskController {
         return taskService.getWikiTaskList(wikiId);
     }
 
-    @PostMapping("/tasks/wikis/{wikiId}/create")
+    @PostMapping("/wikis/{wikiId}/create")
     public ResponseEntity<?> createWikiTaskList(@PathVariable String wikiId) {
         return taskService.createWikiTaskList(wikiId);
+    }
+
+    @PutMapping("/{taskListId}/add")
+    public ResponseEntity<?> addTask(@PathVariable String taskListId, @Valid @RequestBody CreateTaskRequest request) {
+        return taskService.addTask(taskListId, request);
     }
 }
