@@ -28,15 +28,25 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    // get the tasks of a certain wiki in a certain universe
+    // get the tasks of a certain wiki
     @GetMapping("/wikis/{wikiId}")
     public ResponseEntity<?> getWikiTaskList(@PathVariable String wikiId) {
         return taskService.getWikiTaskList(wikiId);
     }
 
+    @GetMapping("/universes/{universeId}")
+    public ResponseEntity<?> getUniverseTaskList(@PathVariable String universeId) {
+        return taskService.getUniverseTaskList(universeId);
+    }
+
     @PostMapping("/wikis/{wikiId}/create")
     public ResponseEntity<?> createWikiTaskList(@PathVariable String wikiId) {
         return taskService.createWikiTaskList(wikiId);
+    }
+
+    @PostMapping("/universes/{universeId}/create")
+    public ResponseEntity<?> createUniverseId(@PathVariable String universeId) {
+        return taskService.createUniverseTaskList(universeId);
     }
 
     @PutMapping("/{taskListId}/add")

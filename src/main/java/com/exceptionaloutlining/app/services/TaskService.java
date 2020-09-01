@@ -5,10 +5,12 @@ import java.util.List;
 
 import com.exceptionaloutlining.app.models.Task;
 import com.exceptionaloutlining.app.models.TaskList;
+import com.exceptionaloutlining.app.models.Universe;
 import com.exceptionaloutlining.app.models.Wiki;
 import com.exceptionaloutlining.app.payload.request.CreateTaskRequest;
 import com.exceptionaloutlining.app.payload.response.MessageResponse;
 import com.exceptionaloutlining.app.repositories.TaskListRepository;
+import com.exceptionaloutlining.app.repositories.UniverseRepository;
 import com.exceptionaloutlining.app.repositories.WikiRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +24,15 @@ public class TaskService {
 
     private final TaskListRepository taskListRepository;
     private final WikiRepository wikiRepository;
+    private final UniverseRepository universeRepository;
     private SequenceGeneratorService taskSequenceIdGenerator;
 
     @Autowired
     public TaskService(TaskListRepository taskListRepository, WikiRepository wikiRepository,
-            SequenceGeneratorService taskSequenceIdGenerator) {
+            UniverseRepository universeRepository, SequenceGeneratorService taskSequenceIdGenerator) {
         this.taskListRepository = taskListRepository;
         this.wikiRepository = wikiRepository;
+        this.universeRepository = universeRepository;
         this.taskSequenceIdGenerator = taskSequenceIdGenerator;
     }
 
@@ -38,6 +42,16 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Error: No Wiki found with id: " + wikiId));
         TaskList taskList = taskListRepository.findById(wiki.getTaskListId())
                 .orElseThrow(() -> new RuntimeException("Error: No TaskList found with id: " + wiki.getTaskListId()));
+
+        return ResponseEntity.ok(taskList);
+    }
+
+    public ResponseEntity<?> getUniverseTaskList(String universeId) {
+
+        Universe universe = universeRepository.findById(universeId)
+                .orElseThrow(() -> new RuntimeException("Error: No Universe found with id: " + universeId));
+        TaskList taskList = taskListRepository.findById(universe.getTaskListId()).orElseThrow(
+                () -> new RuntimeException("Error: No TaskList found with id: " + universe.getTaskListId()));
 
         return ResponseEntity.ok(taskList);
     }
@@ -54,6 +68,22 @@ public class TaskService {
 
         wiki.setTaskListId(taskList.getId());
         wikiRepository.save(wiki);
+
+        return ResponseEntity.ok(new MessageResponse("Task List created successfully", taskList.getId()));
+    }
+
+    public ResponseEntity<?> createUniverseTaskList(String universeId) {
+
+        Universe universe = universeRepository.findById(universeId)
+                .orElseThrow(() -> new RuntimeException("Error: No Universe found with id: " + universeId));
+        TaskList taskList = new TaskList();
+        taskList.setOwnerId(universeId);
+        taskList.setTasks(new ArrayList<Task>());
+
+        taskListRepository.save(taskList);
+
+        universe.setTaskListId(taskList.getId());
+        universeRepository.save(universe);
 
         return ResponseEntity.ok(new MessageResponse("Task List created successfully", taskList.getId()));
     }

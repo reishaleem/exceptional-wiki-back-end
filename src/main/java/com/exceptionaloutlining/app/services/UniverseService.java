@@ -28,14 +28,16 @@ public class UniverseService {
     // rmeoved to stopped circular dependencies...not sure if this is the proper
     // way.
     // private final WikiService wikiService;
+    private final TaskService taskService;
 
     private final WikiRepository wikiRepository;
 
     @Autowired
     public UniverseService(UniverseRepository universeRepository, UserRepository userRepository,
-            WikiRepository wikiRepository) {
+            TaskService taskService, WikiRepository wikiRepository) {
         this.universeRepository = universeRepository;
         this.userRepository = userRepository;
+        this.taskService = taskService;
         this.wikiRepository = wikiRepository;
     }
 
@@ -76,6 +78,7 @@ public class UniverseService {
         universe.setDescription(request.getDesc());
         // universe.setDateCreated(dateCreated);
         universe.setWikis(new ArrayList<String>());
+
         // universe.setMaps(new ArrayList<Map>());
         // universe.setTimelines(new ArrayList<Timeline>());
         // universe.setCalendars(new ArrayList<Calendar>());
@@ -83,6 +86,8 @@ public class UniverseService {
         // universe.setNotebook(new Notebook());
 
         universeRepository.save(universe);
+        taskService.createUniverseTaskList(universe.getId()); // create the todo list
+
         owner.getUniverseIds().add(universe.getId());
         userRepository.save(owner);
 

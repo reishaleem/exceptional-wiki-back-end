@@ -44,6 +44,8 @@ public class Universe {
 
     private List<String> wikis;
 
+    private String taskListId;
+
     @DBRef
     private List<Map> maps;
 
