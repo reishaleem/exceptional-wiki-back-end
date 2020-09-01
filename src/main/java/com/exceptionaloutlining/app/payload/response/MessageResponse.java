@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class MessageResponse {
 
 	private String message;
@@ -17,5 +16,10 @@ public class MessageResponse {
 	// later...
 	public MessageResponse(String message) {
 		this.message = message;
+	}
+
+	public MessageResponse(String message, String id) {
+		this.message = message;
+		this.idOfCreatedDocument = id;
 	}
 }

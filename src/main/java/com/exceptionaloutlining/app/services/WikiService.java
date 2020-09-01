@@ -31,14 +31,17 @@ public class WikiService {
     private final UniverseRepository universeRepository;
     private final UserRepository userRepository;
 
+    private final TaskService taskService;
+
     @Autowired
     public WikiService(WikiRepository repository, UniverseService universeService, UserService userService,
-            UniverseRepository universeRepository, UserRepository userRepository) {
+            UniverseRepository universeRepository, UserRepository userRepository, TaskService taskService) {
         this.wikiRepository = repository;
         this.universeService = universeService;
         this.userService = userService;
         this.universeRepository = universeRepository;
         this.userRepository = userRepository;
+        this.taskService = taskService;
     }
 
     public List<Wiki> getAllWikis() {
@@ -58,6 +61,8 @@ public class WikiService {
         wiki.setName(request.getName());
         wiki.setUniverseId(universeId);
         wikiRepository.save(wiki);
+
+        taskService.createWikiTaskList(wiki.getId()); // create the todo list
 
         Universe universe = universeService.getUniverse(universeId);
         universe.getWikis().add(wiki.getId());
