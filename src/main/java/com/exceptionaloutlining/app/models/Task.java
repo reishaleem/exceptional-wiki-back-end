@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Task {
 
-    private String id;
+    private String id; // not totally sure we need this.
     private String listId; // the list in which the task belongs
     private String task;
     private String dueDate;
