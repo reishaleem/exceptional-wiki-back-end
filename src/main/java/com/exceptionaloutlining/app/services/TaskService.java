@@ -114,7 +114,12 @@ public class TaskService {
                 task.setPinned(request.getPinned());
                 task.setTask(request.getTask());
                 if (task.getId() == null || Long.parseLong(task.getId()) < 1) {
-                        task.setId(taskSequenceIdGenerator.generateSequence(id + "_sequence"));
+                        task.setId(taskSequenceIdGenerator.generateSequence("tasks_sequence")); // need to keep all
+                                                                                                // tasks like this, so
+                                                                                                // that when we cascade
+                                                                                                // up to Universe, the
+                                                                                                // head task list won't
+                                                                                                // have duplicate IDs
                 }
 
                 tasks.add(task);
@@ -165,6 +170,42 @@ public class TaskService {
                         throw (new RuntimeException("Error: No Task found with id: " + taskId));
                 }
                 taskToBeUpdated.setComplete(!taskToBeUpdated.getComplete());
+
+                taskListRepository.save(taskList);
+                taskListRepository.save(headTaskList);
+
+                return ResponseEntity.ok(taskList);
+        }
+
+        public ResponseEntity<?> deleteTask(String listId, String taskId) {
+                TaskList taskList = taskListRepository.findById(listId)
+                                .orElseThrow(() -> new RuntimeException("Error: No TaskList found with id: " + listId));
+                List<Task> tasks = taskList.getTasks();
+
+                // need this so we can cascade the save up to the Universe that has this. Then
+                // we can avoid a bunch of GET requests, maybe.
+                Universe universe = universeRepository.findById(taskList.getUniverseId()).orElseThrow(
+                                () -> new RuntimeException("Error: No universe with id: " + taskList.getUniverseId()));
+                TaskList headTaskList = taskListRepository.findById(universe.getTaskListId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Error: No TaskList found with id: " + universe.getTaskListId()));
+
+                // find and delete the Task in the TaskList
+                for (int i = 0; i < tasks.size(); i++) {
+                        if (tasks.get(i).getId().equals(taskId)) {
+                                tasks.remove(i);
+                                break;
+                        }
+                }
+
+                // find and update the Task in the Head Task List (should do this in a better
+                // way...)
+                for (int i = 0; i < headTaskList.getTasks().size(); i++) {
+                        if (headTaskList.getTasks().get(i).getId().equals(taskId)) {
+                                headTaskList.getTasks().remove(i);
+                                break;
+                        }
+                }
 
                 taskListRepository.save(taskList);
                 taskListRepository.save(headTaskList);
