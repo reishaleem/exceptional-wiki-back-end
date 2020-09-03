@@ -53,4 +53,9 @@ public class TaskController {
     public ResponseEntity<?> addTask(@PathVariable String taskListId, @Valid @RequestBody CreateTaskRequest request) {
         return taskService.addTask(taskListId, request);
     }
+
+    @PutMapping("/{taskListId}/{taskId}/toggle_complete")
+    public ResponseEntity<?> toggleTaskComplete(@PathVariable String taskListId, @PathVariable String taskId) {
+        return taskService.toggleComplete(taskListId, taskId);
+    }
 }
