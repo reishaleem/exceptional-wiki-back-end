@@ -60,6 +60,11 @@ public class TaskController {
         return taskService.toggleComplete(taskListId, taskId);
     }
 
+    @PutMapping("/{taskListId}/{taskId}/toggle_pinned")
+    public ResponseEntity<?> toggleTaskPinned(@PathVariable String taskListId, @PathVariable String taskId) {
+        return taskService.togglePinned(taskListId, taskId);
+    }
+
     @DeleteMapping("/{taskListId}/{taskId}/delete")
     public ResponseEntity<?> deleteTask(@PathVariable String taskListId, @PathVariable String taskId) {
         return taskService.deleteTask(taskListId, taskId);

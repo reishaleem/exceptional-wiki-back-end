@@ -156,6 +156,8 @@ public class TaskService {
                 if (taskToBeUpdated == null) {
                         throw (new RuntimeException("Error: No Task found with id: " + taskId));
                 }
+                taskToBeUpdated.setPinned(false); // whether we are setting complete to true or false, we want pinned to
+                                                  // be false. This is mainly for when setting complete to true.
                 taskToBeUpdated.setComplete(!taskToBeUpdated.getComplete());
 
                 // find and update the Task in the Head Task List (should do this in a better
@@ -170,7 +172,54 @@ public class TaskService {
                 if (taskToBeUpdated == null) {
                         throw (new RuntimeException("Error: No Task found with id: " + taskId));
                 }
+                taskToBeUpdated.setPinned(false);
                 taskToBeUpdated.setComplete(!taskToBeUpdated.getComplete());
+
+                taskListRepository.save(taskList);
+                taskListRepository.save(headTaskList);
+
+                return ResponseEntity.ok(taskList);
+        }
+
+        public ResponseEntity<?> togglePinned(String listId, String taskId) {
+                TaskList taskList = taskListRepository.findById(listId)
+                                .orElseThrow(() -> new RuntimeException("Error: No TaskList found with id: " + listId));
+                List<Task> tasks = taskList.getTasks();
+
+                // need this so we can cascade the save up to the Universe that has this. Then
+                // we can avoid a bunch of GET requests, maybe.
+                Universe universe = universeRepository.findById(taskList.getUniverseId()).orElseThrow(
+                                () -> new RuntimeException("Error: No universe with id: " + taskList.getUniverseId()));
+                TaskList headTaskList = taskListRepository.findById(universe.getTaskListId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Error: No TaskList found with id: " + universe.getTaskListId()));
+
+                // find and update the Task in the TaskList
+                Task taskToBeUpdated = null;
+                for (Task task : tasks) {
+                        if (task.getId().equals(taskId)) {
+                                taskToBeUpdated = task;
+                                break;
+                        }
+                }
+                if (taskToBeUpdated == null) {
+                        throw (new RuntimeException("Error: No Task found with id: " + taskId));
+                }
+                taskToBeUpdated.setPinned(!taskToBeUpdated.getPinned());
+
+                // find and update the Task in the Head Task List (should do this in a better
+                // way...)
+                taskToBeUpdated = null;
+                for (Task task : headTaskList.getTasks()) {
+                        if (task.getId().equals(taskId)) {
+                                taskToBeUpdated = task;
+                                break;
+                        }
+                }
+                if (taskToBeUpdated == null) {
+                        throw (new RuntimeException("Error: No Task found with id: " + taskId));
+                }
+                taskToBeUpdated.setPinned(!taskToBeUpdated.getPinned());
 
                 taskListRepository.save(taskList);
                 taskListRepository.save(headTaskList);
