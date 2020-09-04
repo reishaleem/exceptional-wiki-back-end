@@ -9,6 +9,7 @@ import com.exceptionaloutlining.app.models.Universe;
 import com.exceptionaloutlining.app.models.Wiki;
 import com.exceptionaloutlining.app.payload.request.CreateTaskRequest;
 import com.exceptionaloutlining.app.payload.response.MessageResponse;
+import com.exceptionaloutlining.app.payload.response.TaskListResponse;
 import com.exceptionaloutlining.app.repositories.TaskListRepository;
 import com.exceptionaloutlining.app.repositories.UniverseRepository;
 import com.exceptionaloutlining.app.repositories.WikiRepository;
@@ -128,7 +129,7 @@ public class TaskService {
                 taskListRepository.save(taskList);
                 taskListRepository.save(headTaskList);
 
-                return ResponseEntity.ok(taskList);
+                return ResponseEntity.ok(new TaskListResponse(taskList, task));
         }
 
         public ResponseEntity<?> toggleComplete(String listId, String taskId) {
