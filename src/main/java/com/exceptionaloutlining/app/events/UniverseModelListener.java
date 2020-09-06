@@ -28,15 +28,15 @@ public class UniverseModelListener extends AbstractMongoEventListener<Universe> 
     public void onBeforeConvert(BeforeConvertEvent<Universe> event) {
 
         LocalDateTime timestamp = LocalDateTime.now(easternStandardTime);
-        String formattedTime = timestamp.format(formatter);
+        // String formattedTime = timestamp.format(formatter);
 
         if (event.getSource().getId() == null || Long.parseLong(event.getSource().getId()) < 1) {
             event.getSource().setId(sequenceGenerator.generateSequence(Universe.SEQUENCE_NAME));
         }
         if (event.getSource().getCreatedTimestamp() == null || event.getSource().getCreatedTimestamp().equals("")) {
-            event.getSource().setCreatedTimestamp(formattedTime);
+            event.getSource().setCreatedTimestamp(timestamp.toString());
         }
 
-        event.getSource().setModifiedTimestamp(formattedTime);
+        event.getSource().setModifiedTimestamp(timestamp.toString());
     }
 }

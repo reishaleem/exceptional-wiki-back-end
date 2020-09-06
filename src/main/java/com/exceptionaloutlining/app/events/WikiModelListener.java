@@ -17,7 +17,8 @@ public class WikiModelListener extends AbstractMongoEventListener<Wiki> {
 
     private SequenceGeneratorService sequenceGenerator;
     private final ZoneId easternStandardTime = ZoneId.of("America/New_York"); // right now, always doing EST
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma' 'MMM dd, yyy");
+    // private final DateTimeFormatter formatter =
+    // DateTimeFormatter.ofPattern("hh:mma' 'MMM dd, yyy");
 
     @Autowired
     public WikiModelListener(SequenceGeneratorService sequenceGenerator) {
@@ -28,15 +29,15 @@ public class WikiModelListener extends AbstractMongoEventListener<Wiki> {
     public void onBeforeConvert(BeforeConvertEvent<Wiki> event) {
 
         LocalDateTime timestamp = LocalDateTime.now(easternStandardTime);
-        String formattedTime = timestamp.format(formatter);
+        // String formattedTime = timestamp.format(formatter);
 
         if (event.getSource().getId() == null || Long.parseLong(event.getSource().getId()) < 1) {
             event.getSource().setId(sequenceGenerator.generateSequence(Wiki.SEQUENCE_NAME));
         }
         if (event.getSource().getCreatedTimestamp() == null || event.getSource().getCreatedTimestamp().equals("")) {
-            event.getSource().setCreatedTimestamp(formattedTime);
+            event.getSource().setCreatedTimestamp(timestamp.toString());
         }
 
-        event.getSource().setModifiedTimestamp(formattedTime);
+        event.getSource().setModifiedTimestamp(timestamp.toString());
     }
 }
